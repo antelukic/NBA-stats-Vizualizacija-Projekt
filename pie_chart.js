@@ -44,12 +44,13 @@ async function getChartData(data) {
 async function playersPerStatePieChart() {
   const data = await getPlayers();
   const years = await getYears();
-  var chartData = await getChartData(data);
 
-  chartData = await getChartData(data.filter((player) => player.born == 1927));
+  var chartData = await getChartData(data.filter((player) => player.born == 1927));
 
   var width = 750;
   var height = 750;
+
+  const baseColor = "red"
 
   d3.select("body")
     .append("div")
@@ -115,7 +116,9 @@ function fillPieChart(svg, data) {
     .enter()
     .append("g")
     .attr("class", "pie")
-    .attr("transform", "translate(" + width / 2 + ", " + height / 2 + ")");
+    .attr("transform", "translate(" + width / 2 + ", " + height / 2 + ")")
+    
+  pieArcs.transition().delay(function(d, i) { return i * 500; }).duration(500)
 
   pieArcs
     .append("path")
