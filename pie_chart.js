@@ -18,7 +18,8 @@ async function getYears() {
     item[season].push(year);
     return item;
   });
-  return [...new Set(groupedYears.undefined.map((r) => r.born))];
+  const years = [...new Set(groupedYears.undefined.map((r) => r.born))];
+  return years.sort((a,b) => a - b)
 }
 
 async function getChartData(data) {
@@ -45,12 +46,12 @@ async function playersPerStatePieChart() {
   const data = await getPlayers();
   const years = await getYears();
 
-  var chartData = await getChartData(data.filter((player) => player.born == 1927));
+  var chartData = await getChartData(
+    data.filter((player) => player.born == 1927)
+  );
 
   var width = 750;
   var height = 750;
-
-  const baseColor = "red"
 
   d3.select("body")
     .append("div")
@@ -82,7 +83,7 @@ async function playersPerStatePieChart() {
     .attr("width", width)
     .attr("height", height);
 
-    console.log(chartData)
+  console.log(chartData);
 
   fillPieChart(svg, chartData);
 
@@ -110,15 +111,22 @@ function fillPieChart(svg, data) {
     return d.playersCount;
   });
 
+  console.log(data)
+  
   var pieArcs = svg.selectAll("g.pie").data(pie(data));
 
   pieArcs
     .enter()
     .append("g")
     .attr("class", "pie")
-    .attr("transform", "translate(" + width / 2 + ", " + height / 2 + ")")
-    
-  pieArcs.transition().delay(function(d, i) { return i * 500; }).duration(500)
+    .attr("transform", "translate(" + width / 2 + ", " + height / 2 + ")");
+
+  pieArcs
+    .transition()
+    .delay(function (d, i) {
+      return i * 500;
+    })
+    .duration(500);
 
   pieArcs
     .append("path")
